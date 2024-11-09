@@ -20,7 +20,7 @@ class ProductSerializers(serializers.Serializer):
     name=serializers.CharField(max_length=40)
     price=serializers.IntegerField()
     description=serializers.CharField()
-    color=serializers.CharField(source="color.name")
+    color=ColorSerializers()
 
     def create(self, validated_data):
         color_name = validated_data.pop("color")["name"]
@@ -49,3 +49,8 @@ class ProductSerializers(serializers.Serializer):
             setattr(instance,attr,value)
         instance.save()
         return instance
+    
+    def to_representation(self,instance):
+        representation = super().to_representation(instance)
+        representation["color"]=instance.color.name 
+        return representation
